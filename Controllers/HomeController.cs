@@ -52,6 +52,15 @@ namespace TestApp.Controllers
             {
                 if (pair.Value.Errors.Count == 0) continue;
 
+                //TODO - написать собственный валидатор для полей типа Integer
+                //изменение сообщения об ошибке при введении в числовое поле нечисловой строки
+                if (pair.Key.Equals("Salary") && !String.IsNullOrWhiteSpace(pair.Value.Value.RawValue.ToString()))
+                {
+                    pair.Value.Errors.Clear();
+                    pair.Value.Errors.Add("Введите целое положительное число");
+                }//end
+
+
                 var messages = pair.Value.Errors
                     .Select(model => model.ErrorMessage)
                     .Aggregate((a, b) => a + ";" + b);

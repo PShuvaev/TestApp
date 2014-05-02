@@ -10,6 +10,9 @@ function serializeFormToObject($form) {
 }
 
 $(function () {
+    var employeeFields = ['LastName', 'FirstName', 'MiddleName', 'Email', 'Salary'];
+    var INFO_COLOR = "lightgreen", ERROR_COLOR = "lightcoral";
+
     var form = $("#add-or-edit-employee-form");
     var table = $("#employee-list-table");
 
@@ -19,6 +22,7 @@ $(function () {
     }
     function clearErrorMessages() {
         form.find(".error").remove();
+        showInfoMessage("", "white");
     }
     function addErrorMessage(field, message) {
         form.find("input[name=" + field + "]")
@@ -29,24 +33,16 @@ $(function () {
         $("#error-line").html(message).css("background", color);
     }
 
-    //TODO заменить конкатенацию на handlebars-шаблоны
+    //TODO заменить конкатенацию строк на handlebars-шаблоны
     function getEmployeeTemplate(employee) {
-        return '<tr data-employee-id="' + employee.Id + '">' +
-            '<td data-field="LastName">' + employee.LastName + '</td>' +
-            '<td data-field="FirstName">' + employee.FirstName + '</td>' +
-            '<td data-field="MiddleName">' + employee.MiddleName + '</td>' +
+        function mkTd(fieldName) {
+            var innerHtml = employee[fieldName];
+            if (fieldName == 'Email') innerHtml = '<a href="mailto:' + employee.Email + '">' + employee.Email + '</a>';
+            return '<td data-field="' + fieldName + '">' + innerHtml + '</td>';
+        }
+        return '<tr data-employee-id="' + employee.Id + '">' + employeeFields.map(mkTd).join(' ') +
             '<td>' +
-                '----' +
-            '</td>' +
-            '<td>' +
-                '40' +
-            '</td>' +
-            '<td data-field="Email">' +
-                '<a href="mailto:' + employee.Email + '">' + employee.Email + '</a>' +
-            '</td>' +
-            '<td>' +
-                '<span class="remove-employee-link action-link">Удалить</span>' +
-                '/ ' +
+                '<span class="remove-employee-link action-link">Удалить</span> / ' +
                 '<span class="edit-employee-link action-link">Редактировать</span>' +
             '</td>' +
         '</tr>';
@@ -70,6 +66,7 @@ $(function () {
                 for (var field in errors) {
                     addErrorMessage(field, errors[field]);
                 }
+                showInfoMessage("Проверьте форму на наличие ошибок", ERROR_COLOR);
             } else {
                 employee.Id = data.Id;
                 onSuccessCallback();
@@ -100,10 +97,10 @@ $(function () {
             if (form.find("input[name=Id]").val() == "0") {
                 addEmployeeToTable(employee);
                 clearForm();
-                showInfoMessage("Запись добавлена", "lightgreen");
+                showInfoMessage("Запись добавлена", INFO_COLOR);
             } else {
                 updateEmployeeInTable(employee);
-                showInfoMessage("Запись сохранена", "lightgreen");
+                showInfoMessage("Запись сохранена", INFO_COLOR);
             }
         });
         return false;
@@ -119,12 +116,12 @@ $(function () {
 
         $.post("/Home/RemoveEmployee", { Id: parseInt(id) }, function (data) {
             if (data.Result != "ok") {
-                showInfoMessage("Ошибка", "lightcoral");
+                showInfoMessage("Непредвиденная ошибка", ERROR_COLOR);
             } else {
                 tr.remove();
                 //очистка формы, если в ней находится удаляемая запись
                 if (id == form.find("input[name=Id]").val()) clearForm();
-                showInfoMessage("Запись удалена", "lightgreen");
+                showInfoMessage("Запись удалена", INFO_COLOR);
             }
         });
     });
@@ -143,7 +140,7 @@ $(function () {
 
     /* Заполняет форму данными из переданного json-объекта */
     function fillEmployeeForm(employee) {
-        var fields = ['Id', 'LastName', 'FirstName', 'MiddleName', 'Email'];
+        var fields = ['Id'].concat(employeeFields);
         for (var i = 0; i < fields.length; i++) {
             var field = fields[i];
             form.find("input[name=" + field + "]").val(employee[field]);
@@ -153,12 +150,11 @@ $(function () {
     //TODO: хранить данные в js-объектах, отрисовывать таблицу на клиенте
     /* Собирает данные со строки таблицы, возвращает json-объект */
     function getEmployeeData(tr) {
-        var fields = ['LastName', 'FirstName', 'MiddleName', 'Email'];
         var obj = {
             Id: parseInt(tr.attr("data-employee-id"))
         };
-        for (var i = 0; i < fields.length; i++) {
-            var field = fields[i];
+        for (var i = 0; i < employeeFields.length; i++) {
+            var field = employeeFields[i];
             obj[field] = tr.find("td[data-field=" + field + "]").text().trim();
         }
         return obj;

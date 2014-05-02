@@ -39,9 +39,9 @@ namespace TestApp.Utils
             {
                 new List<Employee>
                 {
-                    new Employee{FirstName = "Александр", MiddleName = "Иванович", LastName = "Брет", Email = "bret@gmail.com"},
-                    new Employee{FirstName = "Сергей", MiddleName = "Александрович", LastName = "Корнеев", Email = "serg@yandex.ru"},
-                    new Employee{FirstName = "Елена", MiddleName = "Борисовна", LastName = "Никитина", Email = "elena25@mail.ru"}
+                    new Employee{FirstName = "Александр", MiddleName = "Иванович", LastName = "Брет", Email = "bret@gmail.com", Salary = 32000},
+                    new Employee{FirstName = "Сергей", MiddleName = "Александрович", LastName = "Корнеев", Email = "serg@yandex.ru", Salary = 114000},
+                    new Employee{FirstName = "Елена", MiddleName = "Борисовна", LastName = "Никитина", Email = "elena25@mail.ru", Salary = 57000}
                 }.ForEach(e => session.Save(e));
             }
         }

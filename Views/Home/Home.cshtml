@@ -15,9 +15,8 @@
         <th>Фамилия</th>
         <th>Имя</th>
         <th>Отчество</th>
-        <th>Должность</th>
-        <th>Возраст</th>
         <th>Email</th>
+        <th>Оклад</th>
         <th>Действие</th>
     </tr>
 
@@ -27,11 +26,10 @@
             <td data-field="LastName">@employee.LastName</td>
             <td data-field="FirstName">@employee.FirstName</td>
             <td data-field="MiddleName">@employee.MiddleName</td>
-            <td>----</td>
-            <td>40</td>
             <td data-field="Email">
                 <a href="mailto:@employee.Email">@employee.Email</a>
             </td>
+            <td data-field="Salary">@employee.Salary</td>
             <td>
                 <span class="remove-employee-link action-link">Удалить</span> / 
                 <span class="edit-employee-link action-link">Редактировать</span>
@@ -68,12 +66,18 @@
         </div>
         <input type="text" name="MiddleName" />
     </div>
-
+    
     <div class="form-row">
         <div class="label">
             <span>Email</span>
         </div>
         <input type="text" name="Email" />
+    </div>
+    <div class="form-row">
+        <div class="label">
+            <span>Оклад</span>
+        </div>
+        <input type="text" name="Salary" />
     </div>
     
     

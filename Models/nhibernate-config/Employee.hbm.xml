@@ -9,5 +9,6 @@
     <property name="MiddleName" />
     <property name="LastName" />
     <property name="Email" />
+    <property name="Salary" />
   </class>
 </hibernate-mapping>
