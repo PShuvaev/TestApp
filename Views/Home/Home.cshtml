@@ -1,0 +1,95 @@
+﻿@section scripts
+{
+   <script type="text/javascript" src="@Url.Content("/Scripts/Home.js")"></script>
+}
+
+@{
+    ViewBag.Title = "Сотрудники фирмы";
+    var employees = ViewBag.employees;
+}
+
+<h2>Список сотрудников фирмы</h2>
+
+<table id="employee-list-table">
+    <tr>
+        <th>Фамилия</th>
+        <th>Имя</th>
+        <th>Отчество</th>
+        <th>Должность</th>
+        <th>Возраст</th>
+        <th>Email</th>
+        <th>Действие</th>
+    </tr>
+
+    @foreach (var employee in employees)
+    {
+        <tr data-employee-id="@employee.Id">
+            <td data-field="LastName">
+                @employee.LastName
+            </td>
+            <td data-field="FirstName">
+                @employee.FirstName
+            </td>
+            <td data-field="MiddleName">
+                @employee.MiddleName
+            </td>
+            <td>
+                ----
+            </td>
+            <td>
+                40
+            </td>
+            <td data-field="Email">
+                <a href="mailto:@employee.Email">@employee.Email</a>
+            </td>
+            <td>
+                <span class="remove-employee-link action-link">Удалить</span>
+                / 
+                <span class="edit-employee-link action-link">Редактировать</span>
+            </td>
+        </tr>
+    }
+    
+</table>
+
+<br/>
+<span id="add-employee-link" class="action-link">Добавить сотрудника</span>
+<br/><br/>
+
+<form id="add-or-edit-employee-form" method="post" action="" style="display: none;">
+    <input type="hidden" name="Id" value="0"/>
+
+    <div class="form-row">
+        <div class="label">
+            <span>Фамилия</span>
+        </div>
+        <input type="text" name="LastName" />
+    </div>
+
+    <div class="form-row">
+        <div class="label">
+            <span>Имя</span>
+        </div>
+        <input type="text" name="FirstName" />
+    </div>
+
+    <div class="form-row">
+        <div class="label">
+            <span>Отчество</span>
+        </div>
+        <input type="text" name="MiddleName" />
+    </div>
+
+    <div class="form-row">
+        <div class="label">
+            <span>Email</span>
+        </div>
+        <input type="text" name="Email" />
+    </div>
+    
+    
+    <div class="form-row">
+        <div class="label">&nbsp;</div>
+        <input type="submit" value="Сохранить" />
+    </div>
+</form>

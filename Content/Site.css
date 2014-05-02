@@ -1,0 +1,132 @@
+﻿body {
+    font-size: .85em;
+    font-family: "Segoe UI", Verdana, Helvetica, Sans-Serif;
+    color: #232323;
+    background-color: #fff;
+}
+
+header, footer, nav, section {
+    display: block;
+}
+
+
+/* Styles for basic forms
+-----------------------------------------------------------*/
+fieldset {
+    border: 1px solid #ddd;
+    padding: 0 1.4em 1.4em 1.4em;
+    margin: 0 0 1.5em 0;
+}
+
+legend {
+    font-size: 1.2em;
+    font-weight: bold;
+}
+
+textarea {
+    min-height: 75px;
+}
+
+.editor-label {
+    margin: 1em 0 0 0;
+}
+
+.editor-field {
+    margin: 0.5em 0 0 0;
+}
+
+
+/* Styles for validation helpers
+-----------------------------------------------------------*/
+.field-validation-error {
+    color: #f00;
+}
+
+.field-validation-valid {
+    display: none;
+}
+
+.input-validation-error {
+    border: 1px solid #f00;
+    background-color: #fee;
+}
+
+.validation-summary-errors {
+    font-weight: bold;
+    color: #f00;
+}
+
+.validation-summary-valid {
+    display: none;
+}
+
+
+/*таблица - список сотрудников*/
+#employee-list-table td
+{
+    padding: 5px 10px;
+}
+
+
+/*активные сслыки*/
+.action-link
+{
+    border-bottom: 1px dashed #000080;
+    cursor: pointer;
+    
+    -webkit-user-select: none;  
+    -moz-user-select: none;    
+    -ms-user-select: none;      
+    user-select: none;
+}
+.action-link:hover 
+{
+    border-bottom: none;
+}
+.remove-employee-link
+{
+    color: Red;
+}
+.edit-employee-link
+{
+    color: Green;
+}
+#add-employee-link
+{
+    color: Green;
+}
+
+/* Форма добавления сотрудника */
+#add-or-edit-employee-form .form-row
+{
+    display: inline-block;
+    width: 100%;
+}
+#add-or-edit-employee-form input
+{
+    float: left;
+}
+
+#add-or-edit-employee-form .label
+{
+    float: left;
+    width: 100px;
+}
+#add-or-edit-employee-form .label span
+{
+    float: right;
+    margin-right: 10px;
+}
+
+
+/**/
+.error
+{
+    color: Red;
+    padding-left: 10px;
+}
+.info
+{
+    color: Green;
+    padding-left: 10px;
+}
