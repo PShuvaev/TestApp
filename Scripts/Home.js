@@ -15,6 +15,7 @@ $(function () {
 
     function clearForm() {
         form[0].reset();
+        form.find("input[name=Id]").val("0");
     }
     function clearErrorMessages() {
         form.find(".error").remove();
@@ -24,15 +25,13 @@ $(function () {
             .after('<span class="error">' + message + '</span>');
     }
 
-    function showInfoMessage(message) {
-        var elem = '<span class="info">' + message + '</span>';
-        form.find("input[type=submit]").after(elem);
+    function showInfoMessage(message, color) {
+        $("#error-line").html(message).css("background", color);
     }
 
     //TODO заменить конкатенацию на handlebars-шаблоны
-    function getEmployerTemplate(employee) {
-        alert(JSON.stringify(employee));
-        return '<tr data-employee-id="' + employee.Id + '>' +
+    function getEmployeeTemplate(employee) {
+        return '<tr data-employee-id="' + employee.Id + '">' +
             '<td data-field="LastName">' + employee.LastName + '</td>' +
             '<td data-field="FirstName">' + employee.FirstName + '</td>' +
             '<td data-field="MiddleName">' + employee.MiddleName + '</td>' +
@@ -53,62 +52,80 @@ $(function () {
         '</tr>';
     }
 
-    function addEmployerToTable(employee) {
-        var tpl = getEmployerTemplate(employee);
+    function addEmployeeToTable(employee) {
+        var tpl = getEmployeeTemplate(employee);
         table.append(tpl);
     }
 
-    function saveEmployer(employer) {
-        $.post("/Home/AddEmployer", employer, function (data) {
+    function updateEmployeeInTable(employee) {
+        var tpl = getEmployeeTemplate(employee);
+        table.find('tr[data-employee-id=' + employee.Id + ']')
+            .replaceWith(tpl);
+    }
+
+    function saveEmployee(employee, onSuccessCallback) {
+        $.post("/Home/AddEmployee", employee, function (data) {
             if (data.Result != "ok") {
                 var errors = data.Errors;
                 for (var field in errors) {
                     addErrorMessage(field, errors[field]);
                 }
-                return;
+            } else {
+                employee.Id = data.Id;
+                onSuccessCallback();
             }
-
-            employer.Id = data.Id;
-            addEmployerToTable(employer);
-            clearForm();
-            showInfoMessage("Запись добавлена");
         });
     }
 
 
 
     /* Скрытие/показ формы добавления/редактирования данных сотрудника */
-    var addEmployeeLink = $("#add-employee-link").toggle(function () {
-        form.css("display", "inherit");
-        addEmployeeLink.html("Скрыть форму");
-    }, function () {
-        form.css("display", "none");
-        addEmployeeLink.html("Добавить сотрудника");
+    var addEmployeeLink = $("#add-employee-link").click(function () {
+        if (form.css("display") == "none") {
+            form.css("display", "inherit");
+            addEmployeeLink.html("Скрыть форму");
+        } else {
+            form.css("display", "none");
+            addEmployeeLink.html("Добавить сотрудника");
+        }
     });
 
 
 
     /* Добавления сотрудника */
     form.find("input[type=submit]").click(function () {
-        var employer = serializeFormToObject(form);
+        var employee = serializeFormToObject(form);
         clearErrorMessages();
-        saveEmployer(employer);
+        saveEmployee(employee, function () {
+            if (form.find("input[name=Id]").val() == "0") {
+                addEmployeeToTable(employee);
+                clearForm();
+                showInfoMessage("Запись добавлена", "lightgreen");
+            } else {
+                updateEmployeeInTable(employee);
+                showInfoMessage("Запись сохранена", "lightgreen");
+            }
+        });
         return false;
     });
 
 
     /* Удаление сотрудника */
     table.on('click', '.remove-employee-link', function () {
-        var tr = $(this).closest("tr");
-        var id = parseInt(tr.attr("data-employee-id"));
+        if (!confirm('Удалить данные сотрудника?')) return;
 
-        $.post("/Home/RemoveEmployee", { Id: id }, function (data) {
+        var tr = $(this).closest("tr");
+        var id = tr.attr("data-employee-id");
+
+        $.post("/Home/RemoveEmployee", { Id: parseInt(id) }, function (data) {
             if (data.Result != "ok") {
-                showInfoMessage("Ошибка");
-                return;
+                showInfoMessage("Ошибка", "lightcoral");
+            } else {
+                tr.remove();
+                //очистка формы, если в ней находится удаляемая запись
+                if (id == form.find("input[name=Id]").val()) clearForm();
+                showInfoMessage("Запись удалена", "lightgreen");
             }
-            tr.remove();
-            showInfoMessage("Запись удалена");
         });
     });
 
@@ -117,9 +134,11 @@ $(function () {
     /* Редактирование данных сотрудника */
     table.on('click', '.edit-employee-link', function () {
         var tr = $(this).closest("tr");
+
+        form.css("display", "inherit");
+        addEmployeeLink.html("Скрыть форму");
+
         fillEmployeeForm(getEmployeeData(tr));
-        addEmployeeLink.click();
-        addCancelEditButton();
     });
 
     /* Заполняет форму данными из переданного json-объекта */
@@ -145,10 +164,10 @@ $(function () {
         return obj;
     }
 
-    function addCancelEditButton() {
-        var cancelBtn = $('<input type="reset" value="Отмена"/>')
-            .insertAfter(form.find("input[type=submit]"));
-        form.find("input[name=Id]").val("0");
-    }
+
+    /* Добавляет к форме редактирования кнопку отмены редактирования */
+    $("input[type=reset]").click(function () {
+        clearForm();
+    });
 
 });

@@ -22,7 +22,7 @@ namespace TestApp.Controllers
             return View("Home");
         }
 
-        public ActionResult AddEmployer([Bind()] Employee employee)
+        public ActionResult AddEmployee([Bind()] Employee employee)
         {
             if (!ModelState.IsValid)
             {
